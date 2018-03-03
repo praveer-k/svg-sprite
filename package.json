@@ -1,0 +1,30 @@
+{
+  "name": "standardise-svg",
+  "version": "1.0.0",
+  "description": "Reduce Unscaled SVG to a standard format and lay them out in a single sprite.",
+  "main": "main.ts",
+  "scripts": {
+    "start": "ts-node ./src/index.ts",
+    "test": "ts-node test.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/praveer-k/standardise-svg.git"
+  },
+  "keywords": [
+    "svg",
+    "standard",
+    "sprite"
+  ],
+  "author": "Praveer Kumar",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/praveer-k/standardise-svg/issues"
+  },
+  "homepage": "https://github.com/praveer-k/standardise-svg#readme",
+  "devDependencies": {
+    "@types/node": "^9.4.6",
+    "xml-parser": "^1.2.1",
+    "xmlbuilder": "^9.0.7"
+  }
+}
