@@ -2,6 +2,7 @@ import { Shape } from './Shape';
 
 export class Path implements Shape{
     name: string;
+    d: string;
     constructor(){
         this.name = 'path';
     }
