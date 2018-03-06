@@ -62,9 +62,11 @@ export class SVG{
     }
     private scalePathsToViewBox(paths: any, options: any): any{
         let scaledPaths = [];
+        let d = '';
+        paths.map((path)=>{ d += path.attributes.d + ' '; });
+        let bounds = this.findBoundingRectangle(d);
+        let scale = { x: options.width/bounds.width, y: options.height/bounds.height };
         paths.map((path, index)=>{
-            let bounds = this.findBoundingRectangle(path.attributes.d);
-            let scale = { x: options.width/bounds.width, y: options.height/bounds.height };
             path.attributes.d = this.scale(path.attributes.d, scale);
             scaledPaths.push(path);
         });
@@ -75,6 +77,8 @@ export class SVG{
         // M, L, H, V, Z
         // Bezier curves
         // C, S, Q, T
+        // Arcs and Circles
+        // A
         d = d.toUpperCase();
         var res = d.replace(/([A-Z])/g,"|$1");
         res = (res[0]=='|') ? res.substr(1):res;
@@ -93,14 +97,14 @@ export class SVG{
             switch(instruction){
                 case 'M':
                 case 'L':
-                    x = parseFloat(coords.split(' ')[0].trim());
-                    y = parseFloat(coords.split(' ')[1].trim());
+                    x = Math.max(x, parseFloat(coords.split(' ')[0].trim()));
+                    y = Math.max(y, parseFloat(coords.split(' ')[1].trim()));
                 break;
                 case 'H':
-                    x += parseFloat(coords.trim());
+                    x = Math.max(x, x + parseFloat(coords.trim()));
                 break;
                 case 'V':
-                    y += parseFloat(coords.trim());
+                    y = Math.max(y, y + parseFloat(coords.trim()));
                 break;
                 case 'C':
                     p = this.getMaxBoundInCubicBezierCurve(coords, x, y);
@@ -119,6 +123,11 @@ export class SVG{
                 break;
                 case 'T':
                     p = this.getMaxBoundInT(coords, x, y, p);
+                    x = p.x;
+                    y = p.y;
+                break;
+                case 'A':
+                    p = this.getMaxBoundInA(coords, x, y);
                     x = p.x;
                     y = p.y;
                 break;
@@ -204,6 +213,23 @@ export class SVG{
         }
         return { x: x, y: y, cpx1: x2, cpy1: y2, cpx2: x3, cpy2: y3 };
     }
+    private getMaxBoundInA(coords, x, y){
+        let x1 = parseFloat(coords.split(' ')[0].trim());
+        let y1 = parseFloat(coords.split(' ')[1].trim());
+        let theta = parseFloat(coords.split(' ')[2].trim());
+        // let la = parseFloat(coords.split(' ')[3].trim()); // large-arc-flag
+        // let s = parseFloat(coords.split(' ')[4].trim());  // sweep-flag
+        let x2 = parseFloat(coords.split(' ')[5].trim());
+        let y2 = parseFloat(coords.split(' ')[6].trim());
+        let max = x1;
+        if (y1 > max) { max = y1; }
+        let radius = max * Math.cos(theta);
+        x2 += radius;
+        y2 += radius;
+        x = Math.max(x, x2);
+        y = Math.max(y, y2);
+        return { x: x, y: y };
+    }
     private scale(d: string, scale={x: 1, y: 1}){
         d = d.toUpperCase();
         var res = d.replace(/([A-Z])/g,"|$1");
@@ -214,7 +240,7 @@ export class SVG{
             pointer = pointer.trim();
             let instruction = pointer[0];
             let coords = pointer.substr(1).replace(/,/g, ' ');
-            console.log(instruction, coords);
+            // console.log(instruction, coords);
             let newCooords = '';
             if(coords.length>0){
                 coords.split(' ').map((num, index) => {
