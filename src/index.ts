@@ -85,12 +85,12 @@ class StandardiseSVG {
         let y = 0;
         let width = this.options.width + this.options.padding * 2;
         let height = this.options.height + this.options.padding * 2;
+        let total = this.svgs.length;
+        let maxWidth = Math.floor(Math.sqrt(total)) * width;
+        let maxHeight = Math.ceil(Math.sqrt(total)) * height;
         let viewBox = '';
         switch(type){
             case 'symbol':
-                let total = this.svgs.length;
-                let maxWidth = Math.floor(Math.sqrt(total)) * width;
-                let maxHeight = Math.ceil(Math.sqrt(total)) * height;
                 viewBox = 0 + ' ' + 0 + ' ' + maxWidth + ' ' + maxHeight;
                 // this.sprite.att({ width: maxWidth, height: maxHeight, viewBox: viewBox, preserveAspectRatio: 'xMidYMid slice'});
                 this.svgs.map((svg, index) => {
