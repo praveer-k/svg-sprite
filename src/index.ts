@@ -71,33 +71,57 @@ class StandardiseSVG {
             group.ele('path', { d: obj.attributes.d, style: 'fill: var(--icon-color);' });
         });
     }
+    private addViewTranslate(svgObj: any, xy: string, wh: string): void{
+        var filename = svgObj.id;
+        let viewBox = xy + ' ' + wh;
+        this.sprite.ele('view', { id : filename, viewBox : viewBox });
+        var group = this.sprite.ele('g', { transform: 'translate('+ xy +')'});
+        svgObj.children.map((obj, index) => {
+            group.ele('path', { d: obj.attributes.d, style: 'fill: var(--icon-color);' });
+        });
+    }
     public generate(type='stacked'): StandardiseSVG{
         let x = 0;
         let y = 0;
         let width = this.options.width + this.options.padding * 2;
         let height = this.options.height + this.options.padding * 2;
-        if (type=='symbol'){
-            let total = this.svgs.length;
-            let maxWidth = Math.floor(Math.sqrt(total)) * width;
-            let maxHeight = Math.ceil(Math.sqrt(total)) * height;
-            let viewBox = 0 + ' ' + 0 + ' ' + maxWidth + ' ' + maxHeight;
-            // this.sprite.att({ width: maxWidth, height: maxHeight, viewBox: viewBox, preserveAspectRatio: 'xMidYMid slice'});
-            this.svgs.map((svg, index) => {
-                let viewBox = -x + ' ' + -y + ' ' + maxWidth + ' ' + maxHeight;
-                this.addSymbol(svg, viewBox);
-                x += width;
-                if (x > maxWidth) {
-                    x = 0;
-                    y += height;
-                }
-            });       
-        } else {
-            // stacked
-            var defs = this.sprite.ele('defs');
-            defs.ele('style', '\n svg .icon { display: none; } \n svg .icon:target { display: inline; } \n');
-            this.sprite.att({ class: 'icon' });
-            let viewBox = 0 + ' ' + 0 + ' ' + width + ' ' + height;
-            this.svgs.map((svg) => { this.addSVG(svg, viewBox); });
+        let viewBox = '';
+        switch(type){
+            case 'symbol':
+                let total = this.svgs.length;
+                let maxWidth = Math.floor(Math.sqrt(total)) * width;
+                let maxHeight = Math.ceil(Math.sqrt(total)) * height;
+                viewBox = 0 + ' ' + 0 + ' ' + maxWidth + ' ' + maxHeight;
+                // this.sprite.att({ width: maxWidth, height: maxHeight, viewBox: viewBox, preserveAspectRatio: 'xMidYMid slice'});
+                this.svgs.map((svg, index) => {
+                    let viewBox = -x + ' ' + -y + ' ' + maxWidth + ' ' + maxHeight;
+                    this.addSymbol(svg, viewBox);
+                    x += width;
+                    if (x > maxWidth) {
+                        x = 0;
+                        y += height;
+                    }
+                });
+            break;
+            case 'viewtranslate':
+                this.svgs.map((svg, index) => {
+                    let xy = x + ' ' + y;
+                    let wh = width + ' ' + height;
+                    this.addViewTranslate(svg, xy, wh);
+                    x += width;
+                    if (x > maxWidth) {
+                        x = 0;
+                        y += height;
+                    }
+                });
+            break;
+            case 'stacked':
+                var defs = this.sprite.ele('defs');
+                defs.ele('style', '\n svg .icon { display: none; } \n svg .icon:target { display: inline; } \n');
+                this.sprite.att({ class: 'icon' });
+                viewBox = 0 + ' ' + 0 + ' ' + width + ' ' + height;
+                this.svgs.map((svg) => { this.addSVG(svg, viewBox); });
+            break;
         }
         return this;
     }
@@ -111,4 +135,4 @@ class StandardiseSVG {
 }
 
 const svg = new StandardiseSVG('./src/light/');
-svg.generate('stacked').write('./src/sprites.svg');
+svg.generate('viewtranslate').write('./src/sprites.svg');
