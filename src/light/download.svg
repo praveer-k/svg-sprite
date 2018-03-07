@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <use xlink:href="#download"></use>
-    <symbol id="download" viewBox="0 0 48 48">
-        <title>download</title>
-        <path d="M17.4,31.4854 L30.6,31.4854 L30.6,33.9 L17.4,33.9 L17.4,31.4854 M22.4769,14.1 L25.5231,14.1 L25.5231,24 L29.5846,19.4122 L29.5846,24 L24,30.0366 L18.4154,24 L18.4154,19.4122 L22.4769,24 L22.4769,14.1 Z"/>
-    </symbol>
-</svg>

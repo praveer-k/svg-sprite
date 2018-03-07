@@ -65,6 +65,7 @@ export class SVG{
         let d = '';
         paths.map((path)=>{ d += path.attributes.d + ' '; });
         let bounds = this.findBoundingRectangle(d);
+        //console.log(bounds);
         let scale = { x: options.width/bounds.width, y: options.height/bounds.height };
         paths.map((path, index)=>{
             path.attributes.d = this.scale(path.attributes.d, scale);
@@ -82,138 +83,66 @@ export class SVG{
         d = d.toUpperCase();
         var res = d.replace(/([A-Z])/g,"|$1");
         res = (res[0]=='|') ? res.substr(1):res;
-        var steps = res.split(' |');
+        var steps = res.split('|');
         var width = 0;
         var height = 0;
-        var x = 0;
-        var y = 0;
-        var p;
+        var p = { x: 0, y: 0 };
         steps.map((pointer, index)=>{
             pointer = pointer.trim();
             let instruction = pointer[0];
             let coords = pointer.substr(1)
-            coords = coords.replace(/,/g, ' ');
+            coords = coords.replace(/-/g, ' -').replace(/,/g, ' ').trim();
             //console.log(instruction, coords);
             switch(instruction){
                 case 'M':
                 case 'L':
-                    x = Math.max(x, parseFloat(coords.split(' ')[0].trim()));
-                    y = Math.max(y, parseFloat(coords.split(' ')[1].trim()));
+                    // no control points
+                    p = { x: parseFloat(coords.split(' ')[0].trim()), y: parseFloat(coords.split(' ')[1].trim()) };
                 break;
                 case 'H':
-                    x = Math.max(x, x + parseFloat(coords.trim()));
+                    // no control points
+                    p = { x: p.x + parseFloat(coords.trim()), y: p.y };
                 break;
                 case 'V':
-                    y = Math.max(y, y + parseFloat(coords.trim()));
+                    // no control points
+                    p = { x: p.x, y: p.y + parseFloat(coords.trim()) };
                 break;
                 case 'C':
-                    p = this.getMaxBoundInCubicBezierCurve(coords, x, y);
-                    x = p.x;
-                    y = p.y;
-                break;
-                case 'S':
-                    p = this.getMaxBoundInS(coords, x, y, p);
-                    x = p.x;
-                    y = p.y;
-                break;
                 case 'Q':
-                    p = this.getMaxBoundInQ(coords, x, y);
-                    x = p.x;
-                    y = p.y;
-                break;
+                case 'S':
                 case 'T':
-                    p = this.getMaxBoundInT(coords, x, y, p);
-                    x = p.x;
-                    y = p.y;
+                    // has control points
+                    p = this.getMaxBoundInCubicBezierCurve(coords, p, instruction);
                 break;
                 case 'A':
-                    p = this.getMaxBoundInA(coords, x, y);
-                    x = p.x;
-                    y = p.y;
+                    // no control points
+                    p = this.getMaxBoundInArc(coords, p);
                 break;
             }
-            if(x > width){ width = x; }
-            if(y > height){ height = y; }
+            if(p.x > width){ width = p.x; }
+            if(p.y > height){ height = p.y; }
         });
         return {width: width, height: height};
     }
-    private getMaxBoundInCubicBezierCurve(coords, x, y){
-        let x1 = x;
-        let y1 = y;
-        let x2 = parseFloat(coords.split(' ')[0].trim());
-        let y2 = parseFloat(coords.split(' ')[1].trim());
-        let x3 = parseFloat(coords.split(' ')[2].trim());
-        let y3 = parseFloat(coords.split(' ')[3].trim());
-        let x4 = parseFloat(coords.split(' ')[4].trim());
-        let y4 = parseFloat(coords.split(' ')[5].trim());
-        let m1 = [(x1+x2)/2, (y1+y2)/2];
-        let m2 = [(x2+x3)/2, (y2+y3)/2];
-        let m3 = [(x3+x4)/2, (y3+y4)/2];
-        let m12 = [(m1[0] + m2[0])/2, (m1[1] + m2[1])/2];
-        let m23 = [(m2[0] + m3[0])/2, (m2[1] + m3[1])/2];
-        let mx = (m12[0] + m23[0])/2;
-        let my = (m12[1] + m23[1])/2;
-        x = Math.max(x1, mx, x4);
-        y = Math.max(y1, my, y4);
-        return { x: x, y: y, cpx1: x3, cpy1: y3, cpx2: x4, cpy2: y4 };
-    }
-    private getMaxBoundInS(coords, x, y, p){
-        let x1 = x;
-        let y1 = y;
-        let x3 = parseFloat(coords.split(' ')[0].trim());
-        let y3 = parseFloat(coords.split(' ')[1].trim());
-
-        let x2 = p.cpx2 + (p.cpx2 - p.cpx1);
-        let y2 = p.cpy2 + (p.cpy2 - p.cpy1);
-        x2 = (x2!==undefined) ? x3:x2;
-        y2 = (y2!==undefined) ? y3:y2;
-        
-        let x4 = parseFloat(coords.split(' ')[2].trim());
-        let y4 = parseFloat(coords.split(' ')[3].trim());
-        let m1 = [(x1+x2)/2, (y1+y2)/2];
-        let m2 = [(x2+x3)/2, (y2+y3)/2];
-        let m3 = [(x3+x4)/2, (y3+y4)/2];
-        let m12 = [(m1[0] + m2[0])/2, (m1[1] + m2[1])/2];
-        let m23 = [(m2[0] + m3[0])/2, (m2[1] + m3[1])/2];
-        let mx = (m12[0] + m23[0])/2;
-        let my = (m12[1] + m23[1])/2;
-        x = Math.max(x1, mx, x4);
-        y = Math.max(y1, my, y4);
-        return { x: x, y: y, cpx1: x3, cpy1: y3, cpx2: x4, cpy2: y4 };
-    }
-    private getMaxBoundInQ(coords, x, y){
-        let x1 = x;
-        let y1 = y;
-        let x2 = parseFloat(coords.split(' ')[0].trim());
-        let y2 = parseFloat(coords.split(' ')[1].trim());
-        let x3 = parseFloat(coords.split(' ')[2].trim());
-        let y3 = parseFloat(coords.split(' ')[3].trim());
-        let m1 = [(x1+x2)/2, (y1+y2)/2];
-        let m2 = [(x2+x3)/2, (y2+y3)/2];
-        let mx = (m1[0] + m2[0])/2;
-        let my = (m1[1] + m2[1])/2;
-        x = Math.max(x1, mx, x3);
-        y = Math.max(y1, my, y3);
-        return { x: x, y: y, cpx1: x2, cpy1: y2, cpx2: x3, cpy2: y3 };
-    }
-    private getMaxBoundInT(coords, x, y, p){
-        let x1 = x;
-        let y1 = y;
-        let x2 = p.cpx2 + (p.cpx2 - p.cpx1);
-        let y2 = p.cpy2 + (p.cpy2 - p.cpy1);
-        let x3 = parseFloat(coords.split(' ')[0].trim());
-        let y3 = parseFloat(coords.split(' ')[1].trim());
-        if( x2!==undefined && y2!==undefined){
-            let m1 = [(x1+x2)/2, (y1+y2)/2];
-            let m2 = [(x2+x3)/2, (y2+y3)/2];
-            let mx = (m1[0] + m2[0])/2;
-            let my = (m1[1] + m2[1])/2;
-            x = Math.max(x1, mx, x3);
-            y = Math.max(y1, my, y3);
+    private getMaxBoundInCubicBezierCurve(coords, p, curveType){
+        let coordinates = this.buildCoordinates(coords);
+        coordinates.splice(0, 0, { x: p.x, y: p.y });
+        if(curveType=='S' || curveType=='T'){
+            let x2 = p.cpx2 + (p.cpx2 - p.cpx1);
+            let y2 = p.cpy2 + (p.cpy2 - p.cpy1);
+            if(x2!==undefined && y2!==undefined){
+                coordinates.splice( 1, 0, { x: x2, y: y2 } );
+            }
         }
-        return { x: x, y: y, cpx1: x2, cpy1: y2, cpx2: x3, cpy2: y3 };
+        if(coordinates.length>2){
+            let m = this.midpoint(JSON.parse(JSON.stringify(coordinates)));
+            p.x = Math.max(coordinates[0].x, m.x, coordinates[coordinates.length-1].x);
+            p.y = Math.max(coordinates[0].y, m.y, coordinates[coordinates.length-1].y);
+        }
+        return { x: p.x, y: p.y, cpx1: coordinates[coordinates.length-2].x, cpy1: coordinates[coordinates.length-2].y,
+                             cpx2: coordinates[coordinates.length-1].x, cpy2: coordinates[coordinates.length-1].y };
     }
-    private getMaxBoundInA(coords, x, y){
+    private getMaxBoundInArc(coords, p){
         let x1 = parseFloat(coords.split(' ')[0].trim());
         let y1 = parseFloat(coords.split(' ')[1].trim());
         let theta = parseFloat(coords.split(' ')[2].trim());
@@ -226,20 +155,54 @@ export class SVG{
         let radius = max * Math.cos(theta);
         x2 += radius;
         y2 += radius;
-        x = Math.max(x, x2);
-        y = Math.max(y, y2);
-        return { x: x, y: y };
+        p.x = Math.max(p.x, x2);
+        p.y = Math.max(p.y, y2);
+        return { x: p.x, y: p.y };
+    }
+    private buildCoordinates(coords: string): any{
+        let coordinates = [];
+        let point = { x: null, y: null };
+        coords.split(' ').map((ele, index)=>{
+            if(index%2==0){
+                point.x = parseFloat(ele.trim());
+            }else{
+                point.y = parseFloat(ele.trim());
+                coordinates.push(point);
+                point = { x: null, y: null };
+            }
+        });
+        return coordinates;
+    }
+    private midpoint(coordinates: any): any{
+        var m = [];
+        while(coordinates.length >= 2){
+            let point = coordinates.pop(0);
+            let x1 = point.x;
+            let y1 = point.y;
+            let x2 = coordinates[0].x;
+            let y2 = coordinates[0].y;
+            let mx = x1 + Math.abs((Math.abs(x1) - Math.abs(x2))/2);
+            let my = y1 + Math.abs((Math.abs(y1) - Math.abs(y2))/2);
+            m.push({ x: mx, y: my });
+        }
+        if(m.length>1){
+            return this.midpoint(m);
+        }else if(coordinates.length==1){
+            return coordinates[0];
+        }else{
+            throw Error ('...Empty array of coordinates should be greater than 0');
+        }
     }
     private scale(d: string, scale={x: 1, y: 1}){
         d = d.toUpperCase();
         var res = d.replace(/([A-Z])/g,"|$1");
         res = (res[0]=='|') ? res.substr(1):res;
-        var steps = res.split(' |');
+        var steps = res.split('|');
         var newSteps = '';
         steps.map((pointer, index)=>{
             pointer = pointer.trim();
             let instruction = pointer[0];
-            let coords = pointer.substr(1).replace(/,/g, ' ');
+            let coords = pointer.substr(1).replace(/-/g, ' -').replace(/,/g, ' ').trim();
             // console.log(instruction, coords);
             let newCooords = '';
             if(coords.length>0){
@@ -254,9 +217,10 @@ export class SVG{
                     }
                 });
             }
+            newCooords = (newCooords[newCooords.length-1]==',') ? newCooords.substring(0,newCooords.length-1): newCooords;
             newSteps += instruction + ' ' + newCooords;
         });
-        //console.log("=----->" + newSteps);
+        // console.log("=----->" + newSteps);
         return newSteps;
     }
 }
