@@ -18,9 +18,9 @@
   "author": "Praveer Kumar",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/praveer-k/standardise-svg/issues"
+    "url": "https://github.com/praveer-k/svg-sprite/issues"
   },
-  "homepage": "https://github.com/praveer-k/standardise-svg#readme",
+  "homepage": "https://github.com/praveer-k/svg-sprite#readme",
   "devDependencies": {
     "@types/node": "^9.4.6",
     "xml-parser": "^1.2.1",
