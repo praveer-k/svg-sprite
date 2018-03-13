@@ -6,6 +6,6 @@ export class Rectangle implements Shape{
         this.name = 'rectangle';
     }
     public convertToPath(obj: any): any{
-
+        return obj;
     }
 }

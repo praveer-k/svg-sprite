@@ -1,8 +1,8 @@
 const fs = require('fs');
-const parse = require('xml-parser');
-const builder = require('xmlbuilder');
 const path = require('path');
 const inspect = require('util').inspect;
+const fastXmlParser = require('fast-xml-parser');
+const builder = require('xmlbuilder');
 
 import { Shapes } from './Shapes/Shapes';
 import { Path } from './Shapes/Path';
@@ -22,6 +22,7 @@ export class SVG{
     }
     public standardise(options:{ height: 32, width:32, padding:8 }): any{
         var drawTags = this.findShapeTags();
+        // console.log(inspect(drawTags, { colors: true, depth: Infinity }));
         var paths = this.convertToPaths(drawTags);
         paths = this.scalePathsToViewBox(paths, options);
         this.obj = { name: 'svg',
@@ -30,25 +31,40 @@ export class SVG{
                                 'xmlns:xlink': 'http://www.w3.org/1999/xlink' },
                      id : this.name,
                      children: paths };
+        return this;
     }
     // Private
     private readfile(filepath): any{
         this.name = filepath.substring(filepath.lastIndexOf('/')+1,  filepath.lastIndexOf('.'));
-        this.obj = parse(fs.readFileSync(filepath, 'utf8')).root;
-        if( this.obj.name !== 'svg' ){
+        let xml = fs.readFileSync(filepath, 'utf8');
+        var options = {
+            attributeNamePrefix : '',
+            attrNodeName: 'attributes',
+            ignoreAttributes : false,
+            ignoreNameSpace : false,
+            trimValues: true
+        };
+        this.obj = fastXmlParser.parse(xml, options);
+        // console.log(inspect(this.obj, { colors: true, depth: Infinity }));
+        if( Object.keys(this.obj)[0] !== 'svg' ){
             throw Error('Given xml object is not of SVG type...');
         }
     }
-    private findShapeTags(children=this.obj.children, tags=[]): any{
-        if (children !== []){
-            children.map((obj, index) => {
-                if(obj.name=='path' || obj.name=='rectangle' || obj.name=='circle' || obj.name=='ellipse' || obj.name=='line' || 
-                   obj.name=='polygon' || obj.name=='polyline' || obj.name=='text'){
-                    tags.push(obj);
+    private findShapeTags(children=this.obj, tags=[]): any{
+        // when object is of type array then name = index
+        Object.keys(children).map((name) => {
+            if(typeof(children[name]) === 'object' && (name=='path' || name=='rectangle' || name=='circle' || name=='ellipse' || name=='line' || name=='polygon' || name=='polyline' || name=='text')){
+                if(children[name] instanceof Array){
+                    children[name].map((path)=>{
+                        tags.push({ name: name, attributes: path.attributes });
+                    });
+                }else{
+                    tags.push({ name: name, attributes: children[name].attributes });
                 }
-                this.findShapeTags(obj.children, tags);
-            });
-        }
+            }else if(typeof(children[name]) === 'object'){
+                this.findShapeTags(children[name], tags);
+            }
+        });
         return tags;
     }
     private convertToPaths(tags: any): any{
@@ -80,7 +96,6 @@ export class SVG{
         // C, S, Q, T
         // Arcs and Circles
         // A
-        d = d.toUpperCase();
         var res = d.replace(/([A-Z])/g,"|$1");
         res = (res[0]=='|') ? res.substr(1):res;
         var steps = res.split('|');
@@ -93,28 +108,42 @@ export class SVG{
             let coords = pointer.substr(1)
             coords = coords.replace(/-/g, ' -').replace(/,/g, ' ').trim();
             //console.log(instruction, coords);
+            var coordinates = this.buildCoordinates(coords, p);
             switch(instruction){
                 case 'M':
+                case 'm':
+                    if(index==0){
+                        p = { x: coordinates[0].x, y: coordinates[0].y };
+                    }
                 case 'L':
-                    // no control points
-                    p = { x: parseFloat(coords.split(' ')[0].trim()), y: parseFloat(coords.split(' ')[1].trim()) };
-                break;
                 case 'H':
-                    // no control points
-                    p = { x: p.x + parseFloat(coords.trim()), y: p.y };
-                break;
                 case 'V':
+                case 'l':
+                case 'h':
+                case 'v':
                     // no control points
-                    p = { x: p.x, y: p.y + parseFloat(coords.trim()) };
+                    coordinates.map((pair, index) => {
+                        p = (pair.x==null && pair.y==null) ? p : p;
+                        p = (pair.x==null && pair.y!=null) ? { x: p.x + pair.x, y: p.y } : p;
+                        p = (pair.x!=null && pair.y==null) ? { x: p.x, y: p.y + pair.y } : p;
+                        p = (pair.x!=null && pair.y!=null) ? { x: pair.x, y: pair.y } : p;
+                        if(p.x > width){ width = p.x; }
+                        if(p.y > height){ height = p.y; }
+                    });
                 break;
                 case 'C':
                 case 'Q':
                 case 'S':
                 case 'T':
+                case 'c':
+                case 'q':
+                case 's':
+                case 't':
                     // has control points
-                    p = this.getMaxBoundInCubicBezierCurve(coords, p, instruction);
+                    p = this.getMaxBoundInCubicBezierCurve(coordinates, p, instruction);
                 break;
                 case 'A':
+                case 'a':
                     // no control points
                     p = this.getMaxBoundInArc(coords, p);
                 break;
@@ -124,8 +153,7 @@ export class SVG{
         });
         return {width: width, height: height};
     }
-    private getMaxBoundInCubicBezierCurve(coords, p, curveType){
-        let coordinates = this.buildCoordinates(coords);
+    private getMaxBoundInCubicBezierCurve(coordinates, p, curveType){
         coordinates.splice(0, 0, { x: p.x, y: p.y });
         if(curveType=='S' || curveType=='T'){
             let x2 = p.cpx2 + (p.cpx2 - p.cpx1);
@@ -146,27 +174,32 @@ export class SVG{
         let x1 = parseFloat(coords.split(' ')[0].trim());
         let y1 = parseFloat(coords.split(' ')[1].trim());
         let theta = parseFloat(coords.split(' ')[2].trim());
-        // let la = parseFloat(coords.split(' ')[3].trim()); // large-arc-flag
-        // let s = parseFloat(coords.split(' ')[4].trim());  // sweep-flag
+        let la = parseFloat(coords.split(' ')[3].trim()); // large-arc-flag
+        let s = parseFloat(coords.split(' ')[4].trim());  // sweep-flag
         let x2 = parseFloat(coords.split(' ')[5].trim());
         let y2 = parseFloat(coords.split(' ')[6].trim());
-        let max = x1;
-        if (y1 > max) { max = y1; }
-        let radius = max * Math.cos(theta);
-        x2 += radius;
-        y2 += radius;
+        let max = Math.abs(x1);
+        if (Math.abs(y1) > max) { max = Math.abs(y1); }
+        if(s==1){
+            x2 += y1;
+            y2 += x1;
+        }
+        x2 += max * Math.cos(theta);
+        y2 += max * Math.sin(theta);
         p.x = Math.max(p.x, x2);
         p.y = Math.max(p.y, y2);
         return { x: p.x, y: p.y };
     }
-    private buildCoordinates(coords: string): any{
+    private buildCoordinates(coords: string, p: any): any{
         let coordinates = [];
         let point = { x: null, y: null };
         coords.split(' ').map((ele, index)=>{
             if(index%2==0){
                 point.x = parseFloat(ele.trim());
+                point.x = (point.x<0) ? (p.x + point.x) : point.x;
             }else{
                 point.y = parseFloat(ele.trim());
+                point.y = (point.y<0) ? (p.y + point.y) : point.y;
                 coordinates.push(point);
                 point = { x: null, y: null };
             }
@@ -194,33 +227,51 @@ export class SVG{
         }
     }
     private scale(d: string, scale={x: 1, y: 1}){
-        d = d.toUpperCase();
         var res = d.replace(/([A-Z])/g,"|$1");
         res = (res[0]=='|') ? res.substr(1):res;
         var steps = res.split('|');
         var newSteps = '';
+        var p = { x: 0, y: 0 };
         steps.map((pointer, index)=>{
             pointer = pointer.trim();
-            let instruction = pointer[0];
+            let instruction = pointer[0].toUpperCase();
             let coords = pointer.substr(1).replace(/-/g, ' -').replace(/,/g, ' ').trim();
-            // console.log(instruction, coords);
-            let newCooords = '';
-            if(coords.length>0){
-                coords.split(' ').map((num, index) => {
-                    let n = parseFloat(num.trim());
-                    if(index%2==0){
-                        n = n * scale.x;
-                        newCooords += n.toFixed(4) + ',';
-                    }else{
-                        n = n * scale.y;
-                        newCooords += n.toFixed(4) + ' ';
-                    }
-                });
+            var coordinates = this.buildCoordinates(coords, p);
+            if( instruction == 'M' && index==0 ){
+                p = { x: coordinates[0].x, y: coordinates[0].y };
             }
-            newCooords = (newCooords[newCooords.length-1]==',') ? newCooords.substring(0,newCooords.length-1): newCooords;
-            newSteps += instruction + ' ' + newCooords;
+            if(instruction=='M' || instruction=='L'){
+                coordinates.map((coordinate)=>{
+                    let x = coordinate.x * scale.x;
+                    let y = coordinate.y * scale.y;
+                    newSteps += instruction + ' ' + x.toFixed(4) + ',' + y.toFixed(4) + ' ';
+                });
+            }else if(instruction=='H'){
+                let x = p.x * scale.x;
+                newSteps += instruction + ' ' + x.toFixed(4) + ' ';
+            }else if(instruction=='V'){
+                let y = p.y * scale.y;
+                newSteps += instruction + ' ' + y.toFixed(4) + ' ';
+            }else if(instruction=='C' || instruction=='Q' || instruction=='S' || instruction=='T'){
+                newSteps += instruction + ' ';
+                coordinates.map((coordinate)=>{
+                    let x = coordinate.x * scale.x;
+                    let y = coordinate.y * scale.y;
+                    newSteps += x.toFixed(4) + ',' + y.toFixed(4) + ' ';
+                });
+            }else if(instruction=='A'){
+                let x1 = parseFloat(coords.split(' ')[0].trim()) * scale.x;
+                let y1 = parseFloat(coords.split(' ')[1].trim()) * scale.y;
+                let theta = parseFloat(coords.split(' ')[2].trim());
+                let la = parseFloat(coords.split(' ')[3].trim()); // large-arc-flag
+                let s = parseFloat(coords.split(' ')[4].trim());  // sweep-flag
+                let x2 = parseFloat(coords.split(' ')[5].trim()) * scale.x;
+                let y2 = parseFloat(coords.split(' ')[6].trim()) * scale.y;
+                newSteps += instruction + ' ' + x1.toFixed(4) + ',' + y1.toFixed(4) + ' ' + theta + ' ' + la + ' ' + s + ' ' + x2.toFixed(4) + ',' + y2.toFixed(4) + ' ';
+            }
+            console.log(instruction, coords);
         });
-        // console.log("=----->" + newSteps);
+        console.log("=----->" + newSteps);
         return newSteps;
     }
 }

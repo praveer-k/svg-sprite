@@ -1,8 +1,6 @@
 const fs = require('fs');
-const parse = require('xml-parser');
 const builder = require('xmlbuilder');
 const path = require('path');
-const inspect = require('util').inspect;
 
 import { SVG } from './SVG';
 /*
@@ -31,7 +29,6 @@ class StandardiseSVG {
         this.svgs = [];
         this.options = options;
         this.walkSource(filepath);
-        //console.log(inspect(this.svgs, { colors: true, depth: Infinity }));
     }
     private walkSource(filepath: string): void{
         let files = fs.readdirSync(filepath);
@@ -45,9 +42,11 @@ class StandardiseSVG {
                 objRef.walkSource(fullPath);
             } else {
                 if(path.extname(fullPath) == '.svg') {
-                    let svg = new SVG(fullPath);
-                    svg.standardise(objRef.options);
-                    objRef.svgs.push(svg.getObject());
+                    let name = fullPath.substring(fullPath.lastIndexOf('/')+1,  fullPath.lastIndexOf('.'));
+                    if(name=='eye-blocked'){
+                        console.log(fullPath);
+                        objRef.svgs.push( new SVG(fullPath).standardise(objRef.options).getObject() );
+                    }
                 }
             }
         });
