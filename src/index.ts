@@ -43,10 +43,10 @@ class StandardiseSVG {
             } else {
                 if(path.extname(fullPath) == '.svg') {
                     let name = fullPath.substring(fullPath.lastIndexOf('/')+1,  fullPath.lastIndexOf('.'));
-                    if(name=='eye-blocked'){
+                    // if(name=='skype'){
                         console.log(fullPath);
                         objRef.svgs.push( new SVG(fullPath).standardise(objRef.options).getObject() );
-                    }
+                    // }
                 }
             }
         });
@@ -57,8 +57,9 @@ class StandardiseSVG {
         var svg = this.sprite.ele('svg', { viewBox : viewBox });
         var group = svg.ele('g', {id : filename, class: 'icon'});
         svgObj.children.map((obj) => {
-            group.ele('path', { d: obj.attributes.d, style: 'fill: var(--icon-color);' });
+            group.ele('path', { d: obj.attributes.d, style: obj.attributes.style });
         });
+        group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
     }
     private addSymbol(svgObj: any, viewBox: string): void{
         var filename = svgObj.id;
@@ -67,8 +68,9 @@ class StandardiseSVG {
         symbol.ele('title', filename);
         var group = symbol.ele('g');
         svgObj.children.map((obj, index) => {
-            group.ele('path', { d: obj.attributes.d, style: 'fill: var(--icon-color);' });
+            group.ele('path', { d: obj.attributes.d, style: obj.attributes.style });
         });
+        group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
     }
     private addViewTranslate(svgObj: any, xy: string, wh: string): void{
         var filename = svgObj.id;
@@ -76,8 +78,9 @@ class StandardiseSVG {
         this.sprite.ele('view', { id : filename, viewBox : viewBox });
         var group = this.sprite.ele('g', { transform: 'translate('+ xy +')'});
         svgObj.children.map((obj, index) => {
-            group.ele('path', { d: obj.attributes.d, style: 'fill: var(--icon-color);' });
+            group.ele('path', { d: obj.attributes.d, style: obj.attributes.style });
         });
+        group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
     }
     public generate(type='stacked'): StandardiseSVG{
         let x = 0;
@@ -133,5 +136,5 @@ class StandardiseSVG {
     }
 }
 
-const svg = new StandardiseSVG('./src/light/');
+const svg = new StandardiseSVG('./src/icomoon/svg/');
 svg.generate('viewtranslate').write('./src/sprites.svg');

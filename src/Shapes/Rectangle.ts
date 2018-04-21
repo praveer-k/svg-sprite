@@ -8,4 +8,8 @@ export class Rectangle implements Shape{
     public convertToPath(obj: any): any{
         return obj;
     }
+    public getBox(): any{
+        let obj: any;
+        return obj;
+    }
 }
