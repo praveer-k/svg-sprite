@@ -43,7 +43,7 @@ class StandardiseSVG {
             } else {
                 if(path.extname(fullPath) == '.svg') {
                     let name = fullPath.substring(fullPath.lastIndexOf('/')+1,  fullPath.lastIndexOf('.'));
-                    // if(name=='skype'){
+                    // if(name=='cloud-upload'){
                         console.log(fullPath);
                         objRef.svgs.push( new SVG(fullPath).standardise(objRef.options).getObject() );
                     // }
@@ -59,7 +59,7 @@ class StandardiseSVG {
         svgObj.children.map((obj) => {
             group.ele('path', { d: obj.attributes.d, style: obj.attributes.style });
         });
-        group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
+        // group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
     }
     private addSymbol(svgObj: any, viewBox: string): void{
         var filename = svgObj.id;
@@ -70,7 +70,7 @@ class StandardiseSVG {
         svgObj.children.map((obj, index) => {
             group.ele('path', { d: obj.attributes.d, style: obj.attributes.style });
         });
-        group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
+        // group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
     }
     private addViewTranslate(svgObj: any, xy: string, wh: string): void{
         var filename = svgObj.id;
@@ -80,7 +80,7 @@ class StandardiseSVG {
         svgObj.children.map((obj, index) => {
             group.ele('path', { d: obj.attributes.d, style: obj.attributes.style });
         });
-        group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
+        // group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
     }
     public generate(type='stacked'): StandardiseSVG{
         let x = 0;
@@ -136,5 +136,5 @@ class StandardiseSVG {
     }
 }
 
-const svg = new StandardiseSVG('./src/icomoon/svg/');
+const svg = new StandardiseSVG('./src/icomoon/svg');
 svg.generate('viewtranslate').write('./src/sprites.svg');

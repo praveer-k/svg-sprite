@@ -1,5 +1,6 @@
 const inspect = require('util').inspect;
 import { Shape } from './Shape';
+import { cpus } from 'os';
 // lines ...
 class M{
     x: number;
@@ -16,11 +17,15 @@ class M{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.x) + ',' + Math.ceil(this.y);
+        return this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
-    public scale(factor, padding): any{
-        this.x = Math.round(this.x * factor) + padding;
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.x = this.x * factor;
+        this.y = this.y * factor;
+    }
+    public translate(x: number, y :number){
+        this.x += x;
+        this.y += y;
     }
 }
 class L{
@@ -38,11 +43,15 @@ class L{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.x) + ',' + Math.ceil(this.y);
+        return this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
-    public scale(factor, padding): any{
-        this.x = Math.round(this.x * factor) + padding;
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.x = this.x * factor;
+        this.y = this.y * factor;
+    }
+    public translate(x: number, y :number){
+        this.x += x;
+        this.y += y;
     }
 }
 class H{
@@ -56,10 +65,13 @@ class H{
         currentPosition.x = this.x;
     }
     public toString(){
-        return Math.ceil(this.x).toString();
+        return this.x.toFixed(3);
     }
-    public scale(factor, padding): any{
-        this.x = Math.round(this.x * factor) + padding;
+    public scale(factor): any{
+        this.x = this.x * factor;
+    }
+    public translate(x: number, y=0){
+        this.x += x;
     }
 }
 class V{
@@ -73,10 +85,13 @@ class V{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.y).toString();
+        return this.y.toFixed(3);
     }
-    public scale(factor, padding): any{
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.y = this.y * factor;
+    }
+    public translate(x=0, y :number){
+        this.y += y;
     }
 }
 class Z{
@@ -88,7 +103,10 @@ class Z{
     public toString(){
         return '';
     }
-    public scale(factor, padding): any{
+    public scale(factor): any{
+        // do nothing
+    }
+    public translate(x = 0, y = 0){
         // do nothing
     }
 }
@@ -120,7 +138,7 @@ class C{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.x1) + ',' + Math.ceil(this.y1) + ' ' + Math.ceil(this.x2) + ',' + Math.ceil(this.y2) + ' ' + Math.ceil(this.x) + ',' + Math.ceil(this.y);
+        return this.x1.toFixed(3) + ',' + this.y1.toFixed(3) + ' ' + this.x2.toFixed(3) + ',' + this.y2.toFixed(3) + ' ' + this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
     public midpoint(x:number, y:number): any{
         let m1x = (x + this.x1)/2;
@@ -139,13 +157,21 @@ class C{
         let my = (m12y + m23y)/2;
         return { x: mx, y: my };
     }
-    public scale(factor, padding): any{
-        this.x1 = Math.round(this.x1 * factor) + padding;
-        this.y1 = Math.round(this.y1 * factor) + padding;
-        this.x2 = Math.round(this.x2 * factor) + padding;
-        this.y2 = Math.round(this.y2 * factor) + padding;
-        this.x = Math.round(this.x * factor) + padding;
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.x1 = this.x1 * factor;
+        this.y1 = this.y1 * factor;
+        this.x2 = this.x2 * factor;
+        this.y2 = this.y2 * factor;
+        this.x = this.x * factor;
+        this.y = this.y * factor;
+    }
+    public translate(x: number, y :number){
+        this.x1 += x; 
+        this.y1 += y; 
+        this.x2 += x;
+        this.y2 += y;
+        this.x += x;
+        this.y += y;
     }
 }
 class S{
@@ -169,14 +195,14 @@ class S{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.x2) + ',' + Math.ceil(this.y2) + ' ' + Math.ceil(this.x) + ',' + Math.ceil(this.y);
+        return this.x2.toFixed(3) + ',' + this.y2.toFixed(3) + ' ' + this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
     public midpoint(cpx: number, cpy:number, x:number, y:number): any{
         let dx = Math.abs(Math.abs(x) - Math.abs(cpx));
         let dy = Math.abs(Math.abs(y) - Math.abs(cpy));
         let x1 = (cpx > x) ? x-dx : x+dx;
         let y1 = (cpy > y) ? y-dy : y+dy;
-        
+        // console.log('midpoint in S ', cpx, cpy, x, y, dx, dy, x1, y1);
         let m1x = (x + x1)/2;
         let m1y = (y + y1)/2;
         let m2x = (x1 + this.x2)/2;
@@ -193,11 +219,17 @@ class S{
         let my = (m12y + m23y)/2;
         return { x: mx, y: my };
     }
-    public scale(factor, padding): any{
-        this.x2 = Math.round(this.x2 * factor) + padding;
-        this.y2 = Math.round(this.y2 * factor) + padding;
-        this.x = Math.round(this.x * factor) + padding;
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.x2 = this.x2 * factor;
+        this.y2 = this.y2 * factor;
+        this.x = this.x * factor;
+        this.y = this.y * factor;
+    }
+    public translate(x: number, y :number){
+        this.x2 += x;
+        this.y2 += y;
+        this.x += x;
+        this.y += y;
     }
 }
 class Q{
@@ -221,7 +253,7 @@ class Q{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.x1) + ',' + Math.ceil(this.y1) + ' ' + Math.ceil(this.x) + ',' + Math.ceil(this.y);
+        return this.x1.toFixed(3) + ',' + this.y1.toFixed(3) + ' ' + this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
     public midpoint(x:number, y:number): any{
         let m1x = (x + this.x1)/2;
@@ -232,11 +264,17 @@ class Q{
         let my = (m1y + m2y)/2;
         return { x: mx, y: my };
     }
-    public scale(factor, padding): any{
-        this.x1 = Math.round(this.x1 * factor) + padding;
-        this.y1 = Math.round(this.y1 * factor) + padding;
-        this.x = Math.round(this.x * factor) + padding;
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.x1 = this.x1 * factor;
+        this.y1 = this.y1 * factor;
+        this.x = this.x * factor;
+        this.y = this.y * factor;
+    }
+    public translate(x: number, y :number){
+        this.x1 += x; 
+        this.y1 += y;
+        this.x += x;
+        this.y += y;
     }
 }
 class T{
@@ -254,7 +292,7 @@ class T{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.x) + ',' + Math.ceil(this.y);
+        return this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
     public midpoint(cpx: number, cpy:number, x:number, y:number): any{
         let dx = Math.abs(Math.abs(x) - Math.abs(cpx));
@@ -269,9 +307,13 @@ class T{
         let my = (m1y + m2y)/2;
         return { x: mx, y: my };
     }
-    public scale(factor, padding): any{
-        this.x = Math.round(this.x * factor) + padding;
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.x = this.x * factor;
+        this.y = this.y * factor;
+    }
+    public translate(x: number, y :number){
+        this.x += x;
+        this.y += y;
     }
 }
 // circles and Arcs ....
@@ -300,14 +342,20 @@ class A{
         currentPosition.y = this.y;
     }
     public toString(){
-        return Math.ceil(this.rx)+ ',' + Math.ceil(this.ry) + ' ' + Math.ceil(this.xar) + ' ' + Math.ceil(this.laf) + ' ' + Math.ceil(this.sf) + ' ' + Math.ceil(this.x) + ',' + Math.ceil(this.y);
+        return this.rx.toFixed(3)+ ',' + this.ry.toFixed(3) + ' ' + this.xar + ' ' + this.laf + ' ' + this.sf + ' ' + this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
-    public scale(factor, padding): any{
-        this.rx = Math.round(this.rx * factor) + padding;
-        this.ry = Math.round(this.ry * factor) + padding;
-        // this.xar = this.xar * factor + padding;
-        this.x = Math.round(this.x * factor) + padding;
-        this.y = Math.round(this.y * factor) + padding;
+    public scale(factor): any{
+        this.rx = this.rx * factor;
+        this.ry = this.ry * factor;
+        // this.xar = this.xar * factor;
+        this.x = this.x * factor;
+        this.y = this.y * factor;
+    }
+    public translate(x: number, y :number){
+        this.rx += x; 
+        this.ry += y; 
+        this.x += x;
+        this.y += y;
     }
 }
 class Element{
@@ -400,6 +448,8 @@ export class Path implements Shape{
         this.p1 = { x: this.objArr[0].x, y: this.objArr[0].y };
         this.p2 = { x: this.objArr[0].x, y: this.objArr[0].y };
         let cur = { x: this.objArr[0].x, y: this.objArr[0].y };
+        var dirx = NaN;
+        var diry = NaN;
         this.objArr.map((obj, index)=>{
             switch(obj.constructor.name){
                 case 'M':
@@ -412,26 +462,43 @@ export class Path implements Shape{
                     cur.y = obj.y;
                 break;
                 case 'H':
-                    cur.x += obj.x;
+                    cur.x = obj.x;
                     if( this.p1.x > obj.x ){ this.p1.x = obj.x; }
                     if( this.p2.x < obj.x ){ this.p2.x = obj.x; }
                 break;
                 case 'V':
-                    cur.y += obj.y;
+                    cur.y = obj.y;
                     if( this.p1.y > obj.y ){ this.p1.y = obj.y; }
                     if( this.p2.y < obj.y ){ this.p2.y = obj.y; }
                 break;
                 case 'C':
-                case 'S':
-                case 'Q':
-                case 'T':
                     if( this.p1.x > Math.min(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x ) ){ this.p1.x = Math.min(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x); }
                     if( this.p1.y > Math.min(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y ) ){ this.p1.y = Math.min(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y); }
                     if( this.p2.x < Math.max(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x ) ){ this.p2.x = Math.max(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x); }
                     if( this.p2.y < Math.max(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y ) ){ this.p2.y = Math.max(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y); }
                     cur.x = obj.x;
                     cur.y = obj.y;
+                    dirx = obj.x2;
+                    diry = obj.y2;
                 break;
+                case 'S':
+                    let sx = obj.midpoint(cur.x, cur.y, dirx, diry).x;
+                    let sy = obj.midpoint(cur.x, cur.y, dirx, diry).y;
+                    if( this.p1.x > Math.min(cur.x, obj.x, sx ) ){ this.p1.x = Math.min(cur.x, obj.x, sx); }
+                    if( this.p1.y > Math.min(cur.y, obj.y, sy ) ){ this.p1.y = Math.min(cur.y, obj.y, sy); }
+                    if( this.p2.x < Math.max(cur.x, obj.x, sx ) ){ this.p2.x = Math.max(cur.x, obj.x, sx); }
+                    if( this.p2.y < Math.max(cur.y, obj.y, sy ) ){ this.p2.y = Math.max(cur.y, obj.y, sy); }
+                    cur.x = obj.x;
+                    cur.y = obj.y;
+                    dirx = obj.x2;
+                    diry = obj.y2;
+                    break;
+                case 'Q':
+                    dirx = obj.x1;
+                    diry = obj.y1;
+                    break;
+                case 'T':
+                    break;
                 case 'A':
                     if(obj.laf == 0 && obj.sf == 0){
                         let x1 = (obj.x - obj.rx);
@@ -458,12 +525,12 @@ export class Path implements Shape{
                     cur.y = obj.y;
                 break;
             }
-            // console.log(inspect([this.p1,this.p2],true, Infinity));
+            // console.log(obj.constructor.name, inspect([this.p1,this.p2],true, Infinity));
         });
-        this.p1.x = Math.round(this.p1.x);
-        this.p1.y = Math.round(this.p1.y);
-        this.p2.x = Math.round(this.p2.x);
-        this.p2.y = Math.round(this.p2.y);
+        this.p1.x = this.p1.x;
+        this.p1.y = this.p1.y;
+        this.p2.x = this.p2.x;
+        this.p2.y = this.p2.y;
         // console.log(inspect([this.p1,this.p2],true, Infinity));
         return this;
     }
@@ -501,10 +568,17 @@ export class Path implements Shape{
         this.attributes.d = path.trim();
         return this;
     }
-    public scale(factor, padding): any{
+    public scale(factor): any{
         this.objArr.map((obj, index)=>{
-            console.log(inspect(obj, true, Infinity));
-            obj.scale(factor, padding);
+            // console.log(inspect(obj, true, Infinity));
+            obj.scale(factor);
+        });
+        return this;
+    }
+    public translate(x: number, y:number): any{
+        this.objArr.map((obj, index)=>{
+            // console.log(inspect(obj, true, Infinity));
+            obj.translate(x, y);
         });
         return this;
     }

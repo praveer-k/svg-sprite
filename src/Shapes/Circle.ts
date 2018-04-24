@@ -6,10 +6,9 @@ export class Circle implements Shape{
         this.name = 'circle';
     }
     public convertToPath(obj: any): any{
-        return obj;
+        return this;
     }
     public getBox(): any{
-        let obj: any;
-        return obj;
+        return this;
     }
 }

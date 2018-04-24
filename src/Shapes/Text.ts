@@ -6,10 +6,9 @@ export class Text implements Shape{
         this.name = 'text';
     }
     public convertToPath(obj: any): any{
-        return obj;
+        return this;
     }
     public getBox(): any{
-        let obj: any;
-        return obj;
+        return this;
     }
 }

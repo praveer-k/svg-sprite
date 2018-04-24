@@ -20,7 +20,7 @@ export class SVG{
     public getObject(){
         return this.obj;
     }
-    public standardise(options:{ height: 32, width:32, padding:8 }): any{
+    public standardise(options:{ height: 64, width:64, padding:8 }): any{
         var drawTags = this.findShapeTags();
         // console.log(inspect(drawTags, { colors: true, depth: Infinity }));
         var paths = this.convertToPaths(drawTags);
@@ -70,10 +70,13 @@ export class SVG{
     private convertToPaths(tags: any): any{
         let paths = [];
         tags.map((obj, index) => {
-            let shape = this.shapes.getShape(obj.name);
-            let newObj = shape.convertToPath(obj).getBox();
-            paths.push(newObj);
+            if(obj.name=='path'){
+                let shape = this.shapes.getShape(obj.name);
+                let newObj = shape.convertToPath(obj).getBox();
+                paths.push(newObj);
+            }
         });
+        // console.log(inspect(paths, true, Infinity));
         return paths;
     }
     private scalePathsToViewBox(paths: any, options: any): any{
@@ -102,12 +105,19 @@ export class SVG{
         });
         let bounds = { width: p2.x - p1.x, height: p2.y - p1.y };
         // to maintain aspect ratio choose the higher value between the two
-        let factor = (bounds.width > bounds.height) ? options.width/bounds.width: options.height/bounds.height;
-        console.log(p1, p2, factor, inspect(bounds, true, Infinity));
+        let size = Math.max(bounds.width, bounds.height);
+        let boxSize = Math.max(options.width, options.height);
+        let factor = boxSize/size;
+        let xdiff = (size - bounds.width) * factor * 0.5;
+        let ydiff = (size - bounds.height) * factor * 0.5;
+        let xpad = options.padding + xdiff;
+        let ypad = options.padding + ydiff;
+        console.log(size.toPrecision(2), boxSize.toPrecision(2), factor.toPrecision(2), xpad.toPrecision(2), ypad.toPrecision(2));
+
         paths.map((path, index)=>{
-            path.scale(factor, options.padding).combineElements();
+            path.translate(-p1.x, -p1.y).scale(factor).translate(xpad, ypad).combineElements();
         });
-        console.log(inspect(paths, true, Infinity));
+        // console.log(inspect(paths, true, Infinity));
         return paths;
     }
 }
