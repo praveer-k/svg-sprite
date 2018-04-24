@@ -494,10 +494,24 @@ export class Path implements Shape{
                     diry = obj.y2;
                     break;
                 case 'Q':
+                    if( this.p1.x > Math.min(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x ) ){ this.p1.x = Math.min(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x); }
+                    if( this.p1.y > Math.min(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y ) ){ this.p1.y = Math.min(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y); }
+                    if( this.p2.x < Math.max(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x ) ){ this.p2.x = Math.max(cur.x, obj.x, obj.midpoint(cur.x, cur.y).x); }
+                    if( this.p2.y < Math.max(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y ) ){ this.p2.y = Math.max(cur.y, obj.y, obj.midpoint(cur.x, cur.y).y); }
+                    cur.x = obj.x;
+                    cur.y = obj.y;
                     dirx = obj.x1;
                     diry = obj.y1;
                     break;
                 case 'T':
+                    let tx = obj.midpoint(cur.x, cur.y, dirx, diry).x;
+                    let ty = obj.midpoint(cur.x, cur.y, dirx, diry).y;
+                    if( this.p1.x > Math.min(cur.x, obj.x, tx ) ){ this.p1.x = Math.min(cur.x, obj.x, tx); }
+                    if( this.p1.y > Math.min(cur.y, obj.y, ty ) ){ this.p1.y = Math.min(cur.y, obj.y, ty); }
+                    if( this.p2.x < Math.max(cur.x, obj.x, tx ) ){ this.p2.x = Math.max(cur.x, obj.x, tx); }
+                    if( this.p2.y < Math.max(cur.y, obj.y, ty ) ){ this.p2.y = Math.max(cur.y, obj.y, ty); }
+                    cur.x = obj.x;
+                    cur.y = obj.y;
                     break;
                 case 'A':
                     if(obj.laf == 0 && obj.sf == 0){
