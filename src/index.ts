@@ -88,8 +88,8 @@ class StandardiseSVG {
         let width = this.options.width + this.options.padding * 2;
         let height = this.options.height + this.options.padding * 2;
         let total = this.svgs.length;
-        let maxWidth = Math.floor(Math.sqrt(total)) * width;
-        let maxHeight = Math.ceil(Math.sqrt(total)) * height;
+        let maxWidth = (Math.sqrt(total) % 1 !== 0) ? (parseInt(Math.sqrt(total).toFixed(0))) * width : Math.sqrt(total) * width;
+        let maxHeight = (Math.sqrt(total) % 1 !== 0) ? (parseInt(Math.sqrt(total).toFixed(0))+1) * height : Math.sqrt(total) * height;
         let viewBox = '';
         switch(type){
             case 'symbol':
@@ -106,12 +106,14 @@ class StandardiseSVG {
                 });
             break;
             case 'viewtranslate':
+                viewBox = 0 + ' ' + 0 + ' ' + maxWidth + ' ' + maxHeight;
+                this.sprite.att({ width: maxWidth, height: maxHeight, viewBox: viewBox, preserveAspectRatio: 'xMidYMid slice'});
                 this.svgs.map((svg, index) => {
                     let xy = x + ' ' + y;
                     let wh = width + ' ' + height;
                     this.addViewTranslate(svg, xy, wh);
                     x += width;
-                    if (x > maxWidth) {
+                    if (x >= maxWidth) {
                         x = 0;
                         y += height;
                     }
