@@ -2,9 +2,10 @@
   "name": "svg-sprite",
   "version": "1.0.0",
   "description": "Reduce Unscaled SVG to a standard format and lay them out in a single sprite.",
-  "main": "main.ts",
+  "main": "./dist/index.js",
   "scripts": {
-    "start": "ts-node ./src/index.ts",
+    "start": "ts-node main.ts",
+    "build": "tsc",
     "test": "ts-node test.ts"
   },
   "repository": {

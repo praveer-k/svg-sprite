@@ -2,7 +2,7 @@ const fs = require('fs');
 const builder = require('xmlbuilder');
 const path = require('path');
 
-import { SVG } from './SVG';
+import { SVGObject } from './SVGObject';
 /*
     <svg>
     <use>
@@ -18,7 +18,7 @@ import { SVG } from './SVG';
         <polyline>
         <text>
 */
-class StandardiseSVG {
+export class SVGSprite {
     sprite: any;
     options: any;
     svgs: any;
@@ -31,8 +31,16 @@ class StandardiseSVG {
         this.walkSource(filepath);
     }
     private walkSource(filepath: string): void{
-        let files = fs.readdirSync(filepath);
-        this.read(files, filepath);
+        const objRef = this;
+        if( fs.statSync(filepath).isDirectory() ){
+            let files = fs.readdirSync(filepath);
+            this.read(files, filepath);
+        } else {
+            if(path.extname(filepath) == '.svg') {
+                console.log(filepath);
+                objRef.svgs.push( new SVGObject(filepath).standardise(objRef.options).getObject() );
+            }
+        }
     }
     private read(files: any, filepath: string): any{
         const objRef = this;
@@ -45,7 +53,7 @@ class StandardiseSVG {
                     let name = fullPath.substring(fullPath.lastIndexOf('/')+1,  fullPath.lastIndexOf('.'));
                     // if(name=='cloud-upload'){
                         console.log(fullPath);
-                        objRef.svgs.push( new SVG(fullPath).standardise(objRef.options).getObject() );
+                        objRef.svgs.push( new SVGObject(fullPath).standardise(objRef.options).getObject() );
                     // }
                 }
             }
@@ -82,7 +90,7 @@ class StandardiseSVG {
         });
         // group.ele('path',{ d: 'M0,0 L 48,0 48,48 0,48 Z M 0,24 L 24,24', style:'stroke: #ff0000; stroke-width:1; fill:none;' });
     }
-    public generate(type='stacked'): StandardiseSVG{
+    public generate(type='stacked'): SVGSprite{
         let x = 0;
         let y = 0;
         let width = this.options.width + this.options.padding * 2;
@@ -137,6 +145,3 @@ class StandardiseSVG {
         });
     }
 }
-
-const svg = new StandardiseSVG('./src/icomoon/svg');
-svg.generate('viewtranslate').write('./src/sprites.svg');

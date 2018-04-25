@@ -1,5 +1,8 @@
 node_modules/
 .DS_Store
 package-lock.json
-src/light/
-src/icomoon/
+test/light/
+test/icomoon/
+test/test.svg
+dist/
+output/

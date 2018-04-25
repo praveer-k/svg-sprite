@@ -6,7 +6,7 @@ export class A{
     sf: number;
     x: number;
     y: number;
-    constructor(instruction, point, currentPosition){
+    constructor(instruction:string, point, currentPosition={x:0, y:0}){
         this.rx = parseFloat(point[0]);
         this.ry = parseFloat(point[1]);
         this.xar = parseFloat(point[2]);

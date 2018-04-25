@@ -7,7 +7,7 @@ const builder = require('xmlbuilder');
 import { Shapes } from './Shapes/Shapes';
 import { Path } from './Shapes/Path';
 
-export class SVG{
+export class SVGObject{
     private shapes: Shapes;
     private obj: any;
     private name: string;

@@ -1,7 +1,7 @@
 import { Shape } from './Shape';
 import { Rectangle } from './Rectangle';
 import { Circle } from './Circle';
-// import './Ellipse';
+import { Ellipse } from './Ellipse';
 // import './Line';
 // import './Polygon';
 // import './Polyline';
@@ -16,6 +16,9 @@ export class Shapes {
                 shape = new Rectangle();
             break;
             case 'circle':
+                shape = new Circle();
+            break;
+            case 'ellipse':
                 shape = new Circle();
             break;
             case 'text':
