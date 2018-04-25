@@ -2,6 +2,9 @@ import { Shape } from './Shape';
 
 export class Text implements Shape{
     name: string;
+    x: number;
+    y: number;
+    text: string;
     constructor(){
         this.name = 'text';
     }

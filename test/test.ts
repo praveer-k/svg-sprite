@@ -21,10 +21,10 @@ type Pointer<controlPoint> = {
     readonly [ P in keyof controlPoint ]: controlPoint[P];
 }
 class Canvas{
-    history: [Pointer<controlPoint>];
+    history: Array<Pointer<controlPoint>>;
     curIndex: number;
     constructor(){
-        this.history.push();
+        this.history = new Array<Pointer<controlPoint>>();
         this.curIndex = -1;
     }
     public curPos(): any{

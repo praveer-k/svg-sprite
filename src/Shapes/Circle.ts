@@ -7,8 +7,9 @@ export class Circle implements Shape{
     cx: number;
     cy: number;
     r: number;
+    p1: any;
+    p2: any;
     constructor(){
-        //<circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
         this.name = 'circle';
     }
     public convertToPath(obj: any): any{
@@ -35,6 +36,8 @@ export class Circle implements Shape{
         return p;
     }
     public getBox(): any{
+        this.p1 = { x: this.cx - this.r, y: this.cy - this.r };
+        this.p2 = { x: this.cx + this.r, y: this.cy + this.r };
         return this;
     }
 }
