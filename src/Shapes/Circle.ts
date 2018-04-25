@@ -12,18 +12,25 @@ export class Circle implements Shape{
         this.name = 'circle';
     }
     public convertToPath(obj: any): any{
-        this.cx = obj.attributes.cx;
-        this.cy = obj.attributes.cy;
-        this.r = obj.attributes.r;
+        this.cx = parseFloat(obj.attributes.cx);
+        this.cy = parseFloat(obj.attributes.cy);
+        this.r = parseFloat(obj.attributes.r);
         let m = new M('M', [this.cx - this.r, this.cy]);
-        let a1 = new A('A', [this.r, this.r, 0, 1, this.r*2, 0]);
-        let a2 = new A('A', [this.r, this.r, 0, 1, -this.r*2, 0]);
-        obj.d = [
+        let a1 = new A('A', [this.r, this.r, 0, 0, 0, this.cx + this.r, this.cy]);
+        let a2 = new A('A', [this.r, this.r, 0, 0, 0, this.cx - this.r, this.cy]);
+        let d = [
             'M ' + m.toString(),
             'A ' + a1.toString(),
-            'A ' + a2.toString()
+            'A ' + a2.toString(),
+            'Z'
         ].join(' ');
-        let p = new Path().convertToPath(obj);
+        let newObj = { 'name' : 'path',
+                        'attributes': {
+                            'd' : d
+                        }
+                     };
+        console.log(newObj);
+        let p = new Path().convertToPath(newObj);
         return p;
     }
     public getBox(): any{

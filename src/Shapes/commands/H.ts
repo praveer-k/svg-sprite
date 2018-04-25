@@ -1,6 +1,6 @@
 export class H{
     x: number;
-    constructor(instruction, point, currentPosition){
+    constructor(instruction, point, currentPosition={x:0, y:0}){
         if(instruction=='h'){
             this.x = currentPosition.x + parseFloat(point[0]);
         }else{

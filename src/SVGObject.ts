@@ -70,7 +70,7 @@ export class SVGObject{
     private convertToPaths(tags: any): any{
         let paths = [];
         tags.map((obj, index) => {
-            if(obj.name=='path'){
+            if(obj.name=='path' || obj.name=='circle'){
                 let shape = this.shapes.getShape(obj.name);
                 let newObj = shape.convertToPath(obj).getBox();
                 paths.push(newObj);
@@ -115,7 +115,7 @@ export class SVGObject{
         console.log(size.toPrecision(2), boxSize.toPrecision(2), factor.toPrecision(2), xpad.toPrecision(2), ypad.toPrecision(2));
 
         paths.map((path, index)=>{
-            path.translate(-p1.x, -p1.y).scale(factor).translate(xpad, ypad).combineElements();
+            path.translate(-p1.x, -p1.y).scale(factor).translate(xpad, ypad).combineCommands();
         });
         // console.log(inspect(paths, true, Infinity));
         return paths;

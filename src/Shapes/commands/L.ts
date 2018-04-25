@@ -1,7 +1,7 @@
 export class L{
     x: number;
     y: number;
-    constructor(instruction, point, currentPosition){
+    constructor(instruction, point, currentPosition={x:0, y:0}){
         if(instruction=='l'){
             this.x = currentPosition.x + parseFloat(point[0]);
             this.y = currentPosition.y + parseFloat(point[1]);

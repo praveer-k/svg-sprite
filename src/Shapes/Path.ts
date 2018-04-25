@@ -1,74 +1,7 @@
 const inspect = require('util').inspect;
 import { Shape } from './Shape';
-import { M, L, H, V, Z, C, Q, S, T, A } from './commands';
+import { M, L, H, V, Z, C, Q, S, T, A, Command } from './commands';
 
-class Element{
-    public getElement(instruction, point, currentPosition): any{
-        var obj: any;
-        switch(instruction.toUpperCase()){
-            case 'M':
-                obj = new M(instruction, point, currentPosition);
-            break;
-            case 'L':
-                obj = new L(instruction, point, currentPosition);
-            break;
-            case 'H':
-                obj = new H(instruction, point, currentPosition);
-            break;
-            case 'V':
-                obj = new V(instruction, point, currentPosition);
-            break;
-            case 'Z':
-                obj = new Z();
-            break;
-            case 'C':
-                obj = new C(instruction, point, currentPosition);
-            break;
-            case 'S':
-                obj = new S(instruction, point, currentPosition);
-            break;
-            case 'Q':
-                obj = new Q(instruction, point, currentPosition);
-            break;
-            case 'T':
-                obj = new T(instruction, point, currentPosition);
-            break;
-            case 'A':
-                obj = new A(instruction, point, currentPosition);
-            break;
-        }
-        return obj;
-    }
-    public getChunkSize(instruction): any{
-        let chunkSize = 0;
-        switch(instruction.toUpperCase()){
-            case 'H': 
-            case 'V':
-                chunkSize = 1;
-            break;
-            case 'M':
-            case 'L':
-            case 'T':
-                chunkSize = 2;
-            break;
-            case 'Q':
-            case 'S':
-                chunkSize = 4;
-            break;
-            case 'C':
-                chunkSize = 6;
-            break;
-            case 'A':
-                chunkSize = 7;
-            break;
-            case 'Z':
-                chunkSize = 0;
-            break;
-        }
-        return chunkSize;
-    }
-}
-// end
 export class Path implements Shape{
     name: string;
     d: string;
@@ -84,7 +17,7 @@ export class Path implements Shape{
         this.objArr = [];
     }
     public convertToPath(obj: any): any{
-        this.relativePathToAbsolute(obj).combineElements();
+        this.relativePathToAbsolute(obj).combineCommands();
         this.attributes.style = (obj.attributes.style===undefined) ? '' : obj.attributes.style;
         return this;
     }
@@ -197,26 +130,16 @@ export class Path implements Shape{
         // console.log(res);
         res = (res[0]=='|') ? res.substr(1):res;
         var steps = [];
-        var ele = new Element();
-        let currentPosition = { x: 0, y:0 };
-        res.split('|').map((pointer, index)=>{
-            let instruction = pointer[0].trim();
-            let coords = pointer.substr(1).replace(/-/g, ' -').replace(/,/g, ' ').trim().split(' ');
-            let chunkSize = (ele.getChunkSize(instruction)==0) ? 1:ele.getChunkSize(instruction);
-            // console.log(instruction, coords, chunkSize, coords.length);
-            for (let i=0, j=coords.length; i<j; i+=chunkSize) {
-                let temp = coords.slice(i, i+chunkSize);
-                // console.log(temp);
-                if(temp.length == chunkSize){
-                    steps.push(ele.getElement(instruction, temp, currentPosition));
-                }
-            }
+        var currentPosition = { x: 0, y: 0 }; // pass by reference so coordinates traverse.
+        res.split('|').map((cmdString, index)=>{
+            var cmd = new Command(cmdString, currentPosition);
+            cmd.all.map((c) => { steps.push(c); });
         });
         // console.log(inspect(steps, { color: true, depth: Infinity }));
         this.objArr = steps;
         return this;
     }
-    public combineElements(): any{
+    public combineCommands(): any{
         let path = '';
         this.objArr.map((obj, i)=>{
             // console.log(obj.constructor.name);

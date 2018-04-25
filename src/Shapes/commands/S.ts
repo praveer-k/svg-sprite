@@ -3,7 +3,7 @@ export class S{
     y2: number;
     x: number;
     y: number;
-    constructor(instruction, point, currentPosition){
+    constructor(instruction, point, currentPosition={x:0, y:0}){
         if(instruction=='s'){
             this.x2 = currentPosition.x + parseFloat(point[0]);
             this.y2 = currentPosition.y + parseFloat(point[1]);

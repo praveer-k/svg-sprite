@@ -5,7 +5,7 @@ export class C{
     y2: number;
     x: number;
     y: number;
-    constructor(instruction, point, currentPosition){
+    constructor(instruction, point, currentPosition={x:0, y:0}){
         if(instruction=='c'){
             this.x1 = currentPosition.x + parseFloat(point[0]);
             this.y1 = currentPosition.y + parseFloat(point[1]);
