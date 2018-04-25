@@ -26,15 +26,12 @@ export class A{
         return this.rx.toFixed(3)+ ',' + this.ry.toFixed(3) + ' ' + this.xar + ' ' + this.laf + ' ' + this.sf + ' ' + this.x.toFixed(3) + ',' + this.y.toFixed(3);
     }
     public scale(factor): any{
-        this.rx = this.rx * factor;
-        this.ry = this.ry * factor;
-        // this.xar = this.xar * factor;
+        this.rx = this.rx * factor/2;
+        this.ry = this.ry * factor/2;
         this.x = this.x * factor;
         this.y = this.y * factor;
     }
     public translate(x: number, y :number){
-        this.rx += x; 
-        this.ry += y; 
         this.x += x;
         this.y += y;
     }

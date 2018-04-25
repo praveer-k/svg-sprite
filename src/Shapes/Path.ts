@@ -91,27 +91,11 @@ export class Path implements Shape{
                     cur.y = obj.y;
                     break;
                 case 'A':
-                    if(obj.laf == 0 && obj.sf == 0){
-                        let x1 = (obj.x - obj.rx);
-                        let y1 = (obj.y - obj.ry);
-                        let x2 = obj.x;
-                        let y2 = obj.y;
-                    } else if(obj.laf == 0 && obj.sf == 1){
-                        let x1 = (obj.x - obj.rx);
-                        let y1 = (obj.y - obj.ry);
-                        let x2 = obj.x;
-                        let y2 = obj.y;
-                    } else if(obj.laf == 1 && obj.sf == 0){
-                        let x1 = (obj.x - 2 * obj.rx);
-                        let y1 = (obj.y - obj.ry);
-                        let x2 = obj.x;
-                        let y2 = obj.y + obj.ry;
-                    } else {
-                        let x1 = (obj.x - obj.rx);
-                        let y1 = (obj.y - 2 * obj.ry);
-                        let x2 = obj.x + obj.rx;
-                        let y2 = obj.y;
-                    }
+                    // ignoring the flags to accomodate only circles
+                    this.p1.x = Math.min(cur.x, obj.x);
+                    this.p1.y = Math.min(cur.y, obj.y);
+                    this.p2.x = Math.max(cur.x, obj.x);
+                    this.p2.y = Math.max(cur.y, obj.y);
                     cur.x = obj.x;
                     cur.y = obj.y;
                 break;

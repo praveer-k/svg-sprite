@@ -26,10 +26,11 @@ export class Circle implements Shape{
         ].join(' ');
         let newObj = { 'name' : 'path',
                         'attributes': {
-                            'd' : d
+                            'd' : d,
+                            'style': (obj.attributes.style===undefined) ? '' : obj.attributes.style
                         }
                      };
-        console.log(newObj);
+        // console.log(newObj);
         let p = new Path().convertToPath(newObj);
         return p;
     }
