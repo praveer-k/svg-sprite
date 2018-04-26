@@ -1,5 +1,5 @@
 {
-  "name": "svg-sprite",
+  "name": "svg-sprite-standardized",
   "version": "1.0.0",
   "description": "Reduce Unscaled SVG to a standard format and lay them out in a single sprite.",
   "main": "./dist/index.js",
@@ -16,7 +16,7 @@
     "svg",
     "sprite"
   ],
-  "author": "Praveer Kumar",
+  "author": "Praveer Kumar <praveerkumar17@gmail.com> (https://github.com/praveer-k)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/praveer-k/svg-sprite/issues"
@@ -24,11 +24,11 @@
   "homepage": "https://github.com/praveer-k/svg-sprite#readme",
   "devDependencies": {
     "@types/node": "^9.4.6",
-    "xmlbuilder": "^9.0.7"
+    "tslint": "^5.9.1",
+    "typescript": "^2.8.3"
   },
   "dependencies": {
     "fast-xml-parser": "^3.3.3",
-    "tslint": "^5.9.1",
-    "typescript": "^2.8.3"
+    "xmlbuilder": "^9.0.7"
   }
 }
