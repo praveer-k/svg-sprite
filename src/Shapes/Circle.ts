@@ -1,5 +1,5 @@
 import { Shape } from './Shape';
-import { M, A } from './commands';
+import { M, A } from './Commands';
 import { Path } from './Path';
 
 export class Circle implements Shape{
