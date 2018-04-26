@@ -6,3 +6,4 @@ let outfilepath = (process.argv[3]==undefined) ? './output/sprites.svg' : proces
 
 const svg = new SVGSprite(infilepath);
 svg.generate('viewtranslate').write(outfilepath);
+// stacked (default)/ viewtranslate / symbol
