@@ -4,5 +4,4 @@ package-lock.json
 test/light/
 test/icomoon/
 test/test.svg
-dist/
 output/
