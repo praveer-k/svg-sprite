@@ -14,7 +14,7 @@ let outfilepath = process.argv[3];
 const svg = new SVGSprite(infilepath);
 svg.generate('viewtranslate')
    .write(outfilepath)
-   .writeCSS('./output/sprites.css');;
+   .writeCSS('./output/sprites.css');
 
 ```
 
