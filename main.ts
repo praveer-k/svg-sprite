@@ -5,5 +5,5 @@ let infilepath = (process.argv[2]==undefined) ? './test/icomoon/svg' : process.a
 let outfilepath = (process.argv[3]==undefined) ? './output/sprites.svg' : process.argv[3];
 
 const svg = new SVGSprite(infilepath);
-svg.generate('viewtranslate').write(outfilepath);
+svg.generate('viewtranslate').write(outfilepath).writeCSS('./output/sprites.css');
 // stacked (default)/ viewtranslate / symbol

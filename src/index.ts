@@ -143,5 +143,31 @@ export class SVGSprite {
             if (err) throw err;
             console.log('The file ' + desfile + ' has been created successfully!');
         });
+        return this;
+    }
+    public writeCSS(desfile){
+        let width = this.options.width + this.options.padding * 2;
+        let height = this.options.height + this.options.padding * 2;
+        let textDoc = '.icon {\n'+
+                      '    height: '+width+'px;\n' +
+                      '    width : '+width+'px;\n' +
+                      '    border: 1px solid #ff0000;\n' +
+                      '}\n';
+        this.svgs.map(( obj, index )=>{
+            let name = obj.id;
+            if(!isNaN(name[0])){
+                name = '_' + name;
+            }
+            textDoc += '.'+name+'{ \n'+
+                       '    background-image  : url("./sprites.svg#'+obj.id+'");\n' +
+                       '    background-size   : '+width+'px '+height+'px;\n' +
+                       '    background-repeat : no-repeat; \n' +
+                       '}\n';
+        });
+        fs.writeFile(desfile, textDoc, (err) => {
+            if (err) throw err;
+            console.log('The file ' + desfile + ' has been created successfully!');
+        });
+        return this;
     }
 }
