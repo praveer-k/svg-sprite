@@ -1,6 +1,6 @@
 {
   "name": "svg-sprite-standardized",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Reduce Unscaled SVG to a standard format and lay them out in a single sprite.",
   "main": "./dist/index.js",
   "scripts": {
@@ -30,5 +30,8 @@
   "dependencies": {
     "fast-xml-parser": "^3.3.3",
     "xmlbuilder": "^9.0.7"
+  },
+  "directories": {
+    "test": "test"
   }
 }
