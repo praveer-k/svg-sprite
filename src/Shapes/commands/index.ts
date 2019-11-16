@@ -1,17 +1,17 @@
 // Line and Move commands
-import { M } from './M';
-import { H } from './H';
-import { V } from './V';
-import { L } from './L';
+import { M } from './m';
+import { H } from './h';
+import { V } from './v';
+import { L } from './l';
 // bezier curves
-import { C } from './C';
-import { Q } from './Q';
-import { S } from './S';
-import { T } from './T';
+import { C } from './c';
+import { Q } from './q';
+import { S } from './s';
+import { T } from './t';
 // Arcs and Circles
-import { A } from './A';
+import { A } from './a';
 // Connect back to initial or complete shape command
-import { Z } from './Z';
+import { Z } from './z';
 
 type commands = M|L|H|V|Z|C|Q|S|T|A;
 

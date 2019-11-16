@@ -4,8 +4,7 @@ const inspect = require('util').inspect;
 const fastXmlParser = require('fast-xml-parser');
 const builder = require('xmlbuilder');
 
-import { Shapes } from './Shapes/Shapes';
-import { Path } from './Shapes/Path';
+import { Shapes } from './shapes/shapes';
 
 export class SVGObject{
     private shapes: Shapes;

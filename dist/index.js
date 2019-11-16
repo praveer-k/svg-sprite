@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./SVGObject"], factory);
+        define(["require", "exports", "./svgobject"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -12,7 +12,7 @@
     var fs = require('fs');
     var builder = require('xmlbuilder');
     var path = require('path');
-    var SVGObject_1 = require("./SVGObject");
+    var svgobject_1 = require("./svgobject");
     /*
         <svg>
         <use>
@@ -47,7 +47,7 @@
             else {
                 if (path.extname(filepath) == '.svg') {
                     console.log(filepath);
-                    objRef.svgs.push(new SVGObject_1.SVGObject(filepath).standardise(objRef.options).getObject());
+                    objRef.svgs.push(new svgobject_1.SVGObject(filepath).standardise(objRef.options).getObject());
                 }
             }
         };
@@ -63,7 +63,7 @@
                         var name = fullPath.substring(fullPath.lastIndexOf('/') + 1, fullPath.lastIndexOf('.'));
                         // if(name=='cloud-upload'){
                         console.log(fullPath);
-                        objRef.svgs.push(new SVGObject_1.SVGObject(fullPath).standardise(objRef.options).getObject());
+                        objRef.svgs.push(new svgobject_1.SVGObject(fullPath).standardise(objRef.options).getObject());
                         // }
                     }
                 }

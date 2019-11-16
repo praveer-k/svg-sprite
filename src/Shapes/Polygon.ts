@@ -1,4 +1,4 @@
-import { Shape } from './Shape';
+import { Shape } from './shape';
 
 export class Polygon implements Shape{
     name: string;

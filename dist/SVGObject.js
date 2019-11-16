@@ -4,7 +4,7 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./Shapes/Shapes"], factory);
+        define(["require", "exports", "./shapes/shapes"], factory);
     }
 })(function (require, exports) {
     "use strict";
@@ -14,11 +14,11 @@
     var inspect = require('util').inspect;
     var fastXmlParser = require('fast-xml-parser');
     var builder = require('xmlbuilder');
-    var Shapes_1 = require("./Shapes/Shapes");
+    var shapes_1 = require("./shapes/shapes");
     var SVGObject = /** @class */ (function () {
         function SVGObject(filepath) {
             // viewbox
-            this.shapes = new Shapes_1.Shapes();
+            this.shapes = new shapes_1.Shapes();
             this.readfile(filepath);
         }
         SVGObject.prototype.getObject = function () {

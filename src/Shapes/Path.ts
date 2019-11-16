@@ -1,6 +1,6 @@
 const inspect = require('util').inspect;
-import { Shape } from './Shape';
-import { M, L, H, V, Z, C, Q, S, T, A, Command } from './Commands';
+import { Shape } from './shape';
+import { M, L, H, V, Z, C, Q, S, T, A, Command } from './commands';
 
 export class Path implements Shape{
     name: string;

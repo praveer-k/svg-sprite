@@ -4,35 +4,35 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./M", "./H", "./V", "./L", "./C", "./Q", "./S", "./T", "./A", "./Z"], factory);
+        define(["require", "exports", "./m", "./h", "./v", "./l", "./c", "./q", "./s", "./t", "./a", "./z"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     // Line and Move commands
-    var M_1 = require("./M");
-    exports.M = M_1.M;
-    var H_1 = require("./H");
-    exports.H = H_1.H;
-    var V_1 = require("./V");
-    exports.V = V_1.V;
-    var L_1 = require("./L");
-    exports.L = L_1.L;
+    var m_1 = require("./m");
+    exports.M = m_1.M;
+    var h_1 = require("./h");
+    exports.H = h_1.H;
+    var v_1 = require("./v");
+    exports.V = v_1.V;
+    var l_1 = require("./l");
+    exports.L = l_1.L;
     // bezier curves
-    var C_1 = require("./C");
-    exports.C = C_1.C;
-    var Q_1 = require("./Q");
-    exports.Q = Q_1.Q;
-    var S_1 = require("./S");
-    exports.S = S_1.S;
-    var T_1 = require("./T");
-    exports.T = T_1.T;
+    var c_1 = require("./c");
+    exports.C = c_1.C;
+    var q_1 = require("./q");
+    exports.Q = q_1.Q;
+    var s_1 = require("./s");
+    exports.S = s_1.S;
+    var t_1 = require("./t");
+    exports.T = t_1.T;
     // Arcs and Circles
-    var A_1 = require("./A");
-    exports.A = A_1.A;
+    var a_1 = require("./a");
+    exports.A = a_1.A;
     // Connect back to initial or complete shape command
-    var Z_1 = require("./Z");
-    exports.Z = Z_1.Z;
+    var z_1 = require("./z");
+    exports.Z = z_1.Z;
     var Command = /** @class */ (function () {
         function Command(cmdString, currentPosition) {
             this.steps = new Array();
@@ -62,34 +62,34 @@
             var obj;
             switch (command.toUpperCase()) {
                 case 'M':
-                    obj = new M_1.M(command, point, currentPosition);
+                    obj = new m_1.M(command, point, currentPosition);
                     break;
                 case 'L':
-                    obj = new L_1.L(command, point, currentPosition);
+                    obj = new l_1.L(command, point, currentPosition);
                     break;
                 case 'H':
-                    obj = new H_1.H(command, point, currentPosition);
+                    obj = new h_1.H(command, point, currentPosition);
                     break;
                 case 'V':
-                    obj = new V_1.V(command, point, currentPosition);
+                    obj = new v_1.V(command, point, currentPosition);
                     break;
                 case 'Z':
-                    obj = new Z_1.Z();
+                    obj = new z_1.Z();
                     break;
                 case 'C':
-                    obj = new C_1.C(command, point, currentPosition);
+                    obj = new c_1.C(command, point, currentPosition);
                     break;
                 case 'S':
-                    obj = new S_1.S(command, point, currentPosition);
+                    obj = new s_1.S(command, point, currentPosition);
                     break;
                 case 'Q':
-                    obj = new Q_1.Q(command, point, currentPosition);
+                    obj = new q_1.Q(command, point, currentPosition);
                     break;
                 case 'T':
-                    obj = new T_1.T(command, point, currentPosition);
+                    obj = new t_1.T(command, point, currentPosition);
                     break;
                 case 'A':
-                    obj = new A_1.A(command, point, currentPosition);
+                    obj = new a_1.A(command, point, currentPosition);
                     break;
             }
             return obj;

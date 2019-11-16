@@ -4,13 +4,13 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./Commands"], factory);
+        define(["require", "exports", "./commands"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     var inspect = require('util').inspect;
-    var Commands_1 = require("./Commands");
+    var commands_1 = require("./commands");
     var Path = /** @class */ (function () {
         function Path() {
             this.name = 'path';
@@ -168,7 +168,7 @@
             var steps = [];
             var currentPosition = { x: 0, y: 0 }; // pass by reference so coordinates traverse.
             res.split('|').map(function (cmdString, index) {
-                var cmd = new Commands_1.Command(cmdString, currentPosition);
+                var cmd = new commands_1.Command(cmdString, currentPosition);
                 cmd.all.map(function (c) { steps.push(c); });
             });
             // console.log(inspect(steps, { color: true, depth: Infinity }));

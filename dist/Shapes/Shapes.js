@@ -4,18 +4,18 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./Rectangle", "./Circle", "./Text", "./Path"], factory);
+        define(["require", "exports", "./rectangle", "./circle", "./text", "./path"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Rectangle_1 = require("./Rectangle");
-    var Circle_1 = require("./Circle");
+    var rectangle_1 = require("./rectangle");
+    var circle_1 = require("./circle");
     // import './Line';
     // import './Polygon';
     // import './Polyline';
-    var Text_1 = require("./Text");
-    var Path_1 = require("./Path");
+    var text_1 = require("./text");
+    var path_1 = require("./path");
     var Shapes = /** @class */ (function () {
         function Shapes() {
         }
@@ -23,19 +23,19 @@
             var shape;
             switch (shapeName.toLowerCase()) {
                 case 'rectangle':
-                    shape = new Rectangle_1.Rectangle();
+                    shape = new rectangle_1.Rectangle();
                     break;
                 case 'circle':
-                    shape = new Circle_1.Circle();
+                    shape = new circle_1.Circle();
                     break;
                 case 'ellipse':
-                    shape = new Circle_1.Circle();
+                    shape = new circle_1.Circle();
                     break;
                 case 'text':
-                    shape = new Text_1.Text();
+                    shape = new text_1.Text();
                     break;
                 case 'path':
-                    shape = new Path_1.Path();
+                    shape = new path_1.Path();
                     break;
             }
             return shape;

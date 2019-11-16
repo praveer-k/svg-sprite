@@ -2,7 +2,7 @@ const fs = require('fs');
 const builder = require('xmlbuilder');
 const path = require('path');
 
-import { SVGObject } from './SVGObject';
+import { SVGObject } from './svgobject';
 /*
     <svg>
     <use>

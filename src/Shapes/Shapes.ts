@@ -1,12 +1,12 @@
-import { Shape } from './Shape';
-import { Rectangle } from './Rectangle';
-import { Circle } from './Circle';
-import { Ellipse } from './Ellipse';
+import { Shape } from './shape';
+import { Rectangle } from './rectangle';
+import { Circle } from './circle';
+import { Ellipse } from './ellipse';
 // import './Line';
 // import './Polygon';
 // import './Polyline';
-import { Text } from './Text';
-import { Path } from './Path';
+import { Text } from './text';
+import { Path } from './path';
 
 export class Shapes {
     public getShape(shapeName: string): Shape{

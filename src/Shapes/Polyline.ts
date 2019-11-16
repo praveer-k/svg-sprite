@@ -1,4 +1,4 @@
-import { Shape } from './Shape';
+import { Shape } from './shape';
 
 export class Polyline implements Shape{
     name: string;

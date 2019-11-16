@@ -4,13 +4,13 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./Commands", "./Path"], factory);
+        define(["require", "exports", "./commands", "./path"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Commands_1 = require("./Commands");
-    var Path_1 = require("./Path");
+    var commands_1 = require("./commands");
+    var path_1 = require("./path");
     var Circle = /** @class */ (function () {
         function Circle() {
             this.name = 'circle';
@@ -19,9 +19,9 @@
             this.cx = parseFloat(obj.attributes.cx);
             this.cy = parseFloat(obj.attributes.cy);
             this.r = parseFloat(obj.attributes.r);
-            var m = new Commands_1.M('M', [this.cx - this.r, this.cy]);
-            var a1 = new Commands_1.A('A', [this.r, this.r, 0, 0, 0, this.cx + this.r, this.cy]);
-            var a2 = new Commands_1.A('A', [this.r, this.r, 0, 0, 0, this.cx - this.r, this.cy]);
+            var m = new commands_1.M('M', [this.cx - this.r, this.cy]);
+            var a1 = new commands_1.A('A', [this.r, this.r, 0, 0, 0, this.cx + this.r, this.cy]);
+            var a2 = new commands_1.A('A', [this.r, this.r, 0, 0, 0, this.cx - this.r, this.cy]);
             var d = [
                 'M ' + m.toString(),
                 'A ' + a1.toString(),
@@ -35,7 +35,7 @@
                 }
             };
             // console.log(newObj);
-            var p = new Path_1.Path().convertToPath(newObj);
+            var p = new path_1.Path().convertToPath(newObj);
             return p;
         };
         Circle.prototype.getBox = function () {
