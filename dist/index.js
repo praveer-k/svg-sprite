@@ -60,7 +60,7 @@
                 }
                 else {
                     if (path.extname(fullPath) == '.svg') {
-                        var name = fullPath.substring(fullPath.lastIndexOf('/') + 1, fullPath.lastIndexOf('.'));
+                        var name = path.basename(fullPath, '.svg');
                         // if(name=='cloud-upload'){
                         console.log(fullPath);
                         objRef.svgs.push(new svgobject_1.SVGObject(fullPath).standardise(objRef.options).getObject());

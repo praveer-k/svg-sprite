@@ -39,7 +39,7 @@
         };
         // Private
         SVGObject.prototype.readfile = function (filepath) {
-            this.name = filepath.substring(filepath.lastIndexOf('/') + 1, filepath.lastIndexOf('.'));
+            this.name = path.basename(filepath, '.svg');
             var xml = fs.readFileSync(filepath, 'utf8');
             var options = {
                 attributeNamePrefix: '',

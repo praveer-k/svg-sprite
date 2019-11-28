@@ -50,7 +50,7 @@ export class SVGSprite {
                 objRef.walkSource(fullPath);
             } else {
                 if(path.extname(fullPath) == '.svg') {
-                    let name = fullPath.substring(fullPath.lastIndexOf('/')+1,  fullPath.lastIndexOf('.'));
+                    let name = path.basename(fullPath, '.svg');
                     // if(name=='cloud-upload'){
                         console.log(fullPath);
                         objRef.svgs.push( new SVGObject(fullPath).standardise(objRef.options).getObject() );

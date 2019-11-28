@@ -34,7 +34,7 @@ export class SVGObject{
     }
     // Private
     private readfile(filepath): any{
-        this.name = filepath.substring(filepath.lastIndexOf('/')+1,  filepath.lastIndexOf('.'));
+        this.name = path.basename(filepath, '.svg');
         let xml = fs.readFileSync(filepath, 'utf8');
         var options = {
             attributeNamePrefix : '',
